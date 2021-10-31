@@ -1,3 +1,3 @@
-import { HelloWorldResolver } from "./users";
+import { FloodDataResolver } from "./floodData";
 
-export default [HelloWorldResolver] as const;
+export default [FloodDataResolver] as const;

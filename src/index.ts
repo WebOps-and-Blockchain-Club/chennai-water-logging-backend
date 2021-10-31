@@ -7,6 +7,7 @@ import resolvers from "./resolvers";
 import entities from "./entities";
 import express from "express";
 import cors from "cors";
+import { graphqlUploadExpress } from "graphql-upload";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ const main = async () => {
   await server.start();
 
   const app = express();
+  app.use(graphqlUploadExpress());
 
   app.use(
     cors({
@@ -39,8 +41,11 @@ const main = async () => {
 
   server.applyMiddleware({ app, cors: false });
 
-  app.listen(8000);
-  console.log(`🚀 Server ready at http://localhost:8000${server.graphqlPath}`);
+  app.use(express.static("public"));
+
+  app.listen(8000, () =>
+    console.log(`🚀 Server ready at http://localhost:8000${server.graphqlPath}`)
+  );
 };
 
 createConnection({
