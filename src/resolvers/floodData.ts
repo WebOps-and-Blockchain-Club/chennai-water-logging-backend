@@ -4,6 +4,7 @@ import { createWriteStream } from "fs";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import path from "path";
 import { GetFloodDatasOutput } from "../types/objectTypes";
+import { FILE_EXTENSIONS } from "../utils/config";
 
 @Resolver()
 export class FloodDataResolver {
@@ -22,6 +23,11 @@ export class FloodDataResolver {
     const stream = createReadStream();
 
     const filetype = path.extname(filename);
+    if (!FILE_EXTENSIONS.includes(filetype.toLowerCase()))
+      throw new Error(
+        `Supported file extensions are ${FILE_EXTENSIONS.join(", ")}`
+      );
+
     const name = Date.now() + "-" + Math.round(Math.random() * 1e9) + filetype;
 
     return new Promise(async (resolve, _reject) =>

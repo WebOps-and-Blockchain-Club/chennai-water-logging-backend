@@ -8,6 +8,7 @@ import entities from "./entities";
 import express from "express";
 import cors from "cors";
 import { graphqlUploadExpress } from "graphql-upload";
+import { FILE_SIZE_LIMIT_MB } from "./utils/config";
 
 dotenv.config();
 
@@ -30,7 +31,12 @@ const main = async () => {
   await server.start();
 
   const app = express();
-  app.use(graphqlUploadExpress());
+  app.use(
+    graphqlUploadExpress({
+      maxFileSize: FILE_SIZE_LIMIT_MB * 1000000, // 10MB
+      maxFiles: 1,
+    })
+  );
 
   app.use(
     cors({
