@@ -3,6 +3,7 @@ import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { createWriteStream } from "fs";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import path from "path";
+import { GetFloodDatasOutput } from "../types/objectTypes";
 
 @Resolver()
 export class FloodDataResolver {
@@ -39,6 +40,19 @@ export class FloodDataResolver {
           throw new Error("Image upload failed. Retry");
         })
     );
+  }
+
+  //ADMIN
+  @Query(() => GetFloodDatasOutput)
+  async getDatas(
+    @Arg("Password") adminPassword: string,
+    @Arg("skip", { nullable: true }) skip: number,
+    @Arg("limit", { nullable: true }) take: number
+  ) {
+    if (adminPassword !== process.env.SECRET) throw new Error("Unauthorized");
+    const datas = await FloodData.find({ where: {}, skip, take });
+    const count = await FloodData.count();
+    return { datas, count };
   }
 }
 
