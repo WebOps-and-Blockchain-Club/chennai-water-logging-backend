@@ -6,9 +6,9 @@ import path from "path";
 
 @Resolver()
 export class FloodDataResolver {
-  @Query(() => String)
-  helloworld() {
-    return "Hello World";
+  @Query(() => FloodData)
+  async getDataByID(@Arg("ID") id: string) {
+    return await FloodData.findOneOrFail({ where: { id } });
   }
 
   @Mutation(() => String)
