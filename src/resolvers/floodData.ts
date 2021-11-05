@@ -37,7 +37,7 @@ export class FloodDataResolver {
           const data = await FloodData.create({
             location,
             depth,
-            image: `http://localhost:8000/images/${name}`,
+            image: name,
           }).save();
           resolve(data.id);
         })
