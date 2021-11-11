@@ -6,6 +6,7 @@ import {
   Column,
   Entity,
   PrimaryColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 @Entity("FloodData")
@@ -27,6 +28,10 @@ export class FloodData extends BaseEntity {
   @Column()
   @Field()
   depth: string;
+
+  @UpdateDateColumn()
+  @Field()
+  time: string;
 
   @Column()
   @Field()
