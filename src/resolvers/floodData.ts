@@ -5,6 +5,7 @@ import { FileUpload, GraphQLUpload } from "graphql-upload";
 import path from "path";
 import { GetFloodDatasOutput } from "../types/objectTypes";
 import { FILE_EXTENSIONS } from "../utils/config";
+import { MoreThan } from "typeorm";
 
 @Resolver()
 export class FloodDataResolver {
@@ -53,11 +54,28 @@ export class FloodDataResolver {
   async getDatas(
     @Arg("Password") adminPassword: string,
     @Arg("skip", { nullable: true }) skip: number,
-    @Arg("limit", { nullable: true }) take: number
+    @Arg("limit", { nullable: true }) take: number,
+    @Arg("TimeLimit", { nullable: true }) timeLimit: number
   ) {
     if (adminPassword !== process.env.SECRET) throw new Error("Unauthorized");
-    const datas = await FloodData.find({ where: {}, skip, take });
-    const count = await FloodData.count();
+
+    let filter = {};
+    if (timeLimit) {
+      let date = new Date();
+      date.setHours(date.getHours() - timeLimit);
+      const dateISOString = new Date(date).toISOString();
+
+      filter = { time: MoreThan(`'${dateISOString}'`) };
+    }
+
+    const datas = await FloodData.find({
+      where: filter,
+      skip,
+      take,
+    });
+    const count = await FloodData.count({
+      where: filter,
+    });
     return { datas, count };
   }
 }
