@@ -78,6 +78,30 @@ export class FloodDataResolver {
     });
     return { datas, count };
   }
+
+  //ADMIN
+  @Query(() => String)
+  async getDataInCSV(@Arg("Password") adminPassword: string) {
+    if (adminPassword !== process.env.SECRET) throw new Error("Unauthorized");
+
+    const datas = await FloodData.find();
+
+    let csv = '"Longitude","Latitude","Depth","Timestamp","Image URL"';
+    datas.map((data) => {
+      const JSONloc = JSON.parse(data.location);
+
+      let date = new Date(data.time);
+      date.setHours(date.getHours() + 5);
+      date.setMinutes(date.getMinutes() + 30);
+      const formatedTime = new Date(date).toLocaleString();
+
+      const imgURL = `https://chennaiwaterlogging.org/node/images/${data.image}`;
+
+      csv += `\n"${JSONloc.longitude}","${JSONloc.latitude}","${data.depth}","${formatedTime}","${imgURL}"`;
+    });
+
+    return csv;
+  }
 }
 
 // curl --request POST \
